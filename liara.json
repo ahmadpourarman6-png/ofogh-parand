@@ -1,13 +1,10 @@
 {
-  "platform": "node",
-  "app": "ofogh-parand",
-  "port": 3000,
   "node": {
     "version": "18"
   },
+  "port": 3000,
   "build": {
     "hooks": {
-      "preBuild": "npm install",
       "postBuild": "npx prisma generate"
     }
   }
