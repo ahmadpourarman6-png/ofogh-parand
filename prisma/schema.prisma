@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          Role      @default(USER)
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  invoices      Invoice[]
+  contracts     Contract[]
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Invoice {
+  id          String        @id @default(cuid())
+  invoiceNo   String        @unique
+  customerId  String
+  customerName String
+  totalAmount Decimal       @db.Decimal(15, 2)
+  taxAmount   Decimal       @db.Decimal(15, 2)
+  discount    Decimal       @db.Decimal(15, 2) @default(0)
+  status      InvoiceStatus @default(DRAFT)
+  issueDate   DateTime      @default(now())
+  dueDate     DateTime?
+  notes       String?       @db.Text
+  createdById String
+  createdBy   User          @relation(fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  items InvoiceItem[]
+
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productName String
+  description String? @db.Text
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(15, 2)
+  totalPrice  Decimal @db.Decimal(10, 2)
+
+  @@map("invoice_items")
+}
+
+model Contract {
+  id              String         @id @default(cuid())
+  contractNo      String         @unique
+  contractType    ContractType   @default(EMPLOYMENT)
+  
+  // اطلاعات مشترک
+  partyName       String         // نام طرف قرارداد (کارمند یا مشتری)
+  partyId         String         // شماره ملی یا شناسه ملی
+  partyAddress    String?        @db.Text
+  partyPhone      String?
+  
+  // اطلاعات قرارداد استخدام
+  position        String?        // سمت شغلی
+  salary          Decimal?       @db.Decimal(15, 2)
+  salaryType      String?        @default("FIXED") // FIXED, COMMISSION, MIXED
+  commission      Decimal?       @db.Decimal(5, 2) // درصد پورسانت (0-100)
+  
+  // اطلاعات قرارداد پروژه
+  projectTitle    String?        // عنوان پروژه
+  projectAmount   Decimal?       @db.Decimal(15, 2)
+  deliveryDays    Int?           // مدت تحویل به روز
+  supportMonths   Int?           // مدت پشتیبانی به ماه
+  paymentTerms    String?        @db.Text // شرایط پرداخت
+  
+  // تاریخ‌ها
+  startDate       DateTime
+  endDate         DateTime?
+  
+  // وضعیت و محتوا
+  status          ContractStatus @default(ACTIVE)
+  terms           String         @db.Text // شرایط و مفاد قرارداد
+  notes           String?        @db.Text
+  
+  createdById     String
+  createdBy       User           @relation(fields: [createdById], references: [id])
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@map("contracts")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MANAGER
+  ACCOUNTANT
+  SALES
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum ContractStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+}
+
+enum ContractType {
+  EMPLOYMENT      // قرارداد استخدام
+  PROJECT         // قرارداد پروژه
+  NDA            // قرارداد محرمانگی
+}

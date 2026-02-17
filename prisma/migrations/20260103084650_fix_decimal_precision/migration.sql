@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "invoice_items" ALTER COLUMN "unitPrice" SET DATA TYPE DECIMAL(15,2);
+
+-- AlterTable
+ALTER TABLE "invoices" ALTER COLUMN "totalAmount" SET DATA TYPE DECIMAL(15,2),
+ALTER COLUMN "taxAmount" SET DATA TYPE DECIMAL(15,2),
+ALTER COLUMN "discount" SET DATA TYPE DECIMAL(15,2);

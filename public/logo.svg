@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 800">
+  <!-- Arrow -->
+  <polygon points="25,400 250,225 250,325 150,400 250,475 250,575" fill="#2C5282"/>
+  
+  <!-- Circuit lines -->
+  <g stroke-width="25" fill="none">
+    <line x1="250" y1="250" x2="450" y2="150" stroke="#0D9488"/>
+    <line x1="250" y1="350" x2="450" y2="250" stroke="#14B8A6"/>
+    <line x1="250" y1="450" x2="450" y2="350" stroke="#2DD4BF"/>
+  </g>
+  
+  <!-- Circuit nodes -->
+  <circle cx="520" cy="120" r="40" fill="#5EEAD4"/>
+  <circle cx="520" cy="230" r="40" fill="#5EEAD4"/>
+  <circle cx="520" cy="340" r="40" fill="#5EEAD4"/>
+  <circle cx="655" cy="120" r="40" fill="#99F6E4"/>
+  <circle cx="655" cy="230" r="40" fill="#99F6E4"/>
+  <circle cx="655" cy="340" r="40" fill="#99F6E4"/>
+  
+  <!-- Letters D and T -->
+  <g fill="#0891B2" stroke="none">
+    <!-- D -->
+    <path d="M 470,480 L 470,720 L 600,720 C 680,720 720,680 720,600 C 720,520 680,480 600,480 Z M 530,540 L 600,540 C 640,540 660,560 660,600 C 660,640 640,660 600,660 L 530,660 Z"/>
+    
+    <!-- T -->
+    <path d="M 750,480 L 750,540 L 810,540 L 810,720 L 870,720 L 870,540 L 930,540 L 930,480 Z"/>
+  </g>
+  
+  <!-- Top bar -->
+  <rect x="750" y="350" width="180" height="40" fill="#5EEAD4" rx="5"/>
+  <rect x="470" y="450" width="360" height="40" fill="#14B8A6" rx="5"/>
+</svg>
